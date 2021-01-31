@@ -24,7 +24,7 @@
 
 ## X-Category: Interface Enhancements
 
-ACP.lua
+ACPR.lua
 localization-enUS.lua
 localization-zhTW.lua
 localization-koKR.lua
@@ -36,4 +36,4 @@ localization-esES.lua
 localization-ruRU.lua
 localization-esMX.lua
 localization-ptBR.lua
-ACP.xml
+ACPR.xml
