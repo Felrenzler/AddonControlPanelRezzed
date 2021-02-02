@@ -1,4 +1,4 @@
-if not ACP then return end
+if not ACPR then return end
 
 --Italian Localization by Kelhar@Runetotem-EU
 
@@ -7,7 +7,7 @@ if not ACP then return end
 --@localization(locale="itIT", format="lua_table")@
 
 if (GetLocale() == "itIT") then
-	ACP:UpdateLocale(L)
+	ACPR:UpdateLocale(L)
 end
 
 --@end-non-debug@]===]

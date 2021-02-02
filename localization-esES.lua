@@ -1,10 +1,10 @@
-if not ACP then return end
+if not ACPR then return end
 
 --[===[@non-debug@
 
 --@localization(locale="esES", format="lua_table")@
 
 if (GetLocale() == "esES") then
-	ACP:UpdateLocale(L)
+	ACPR:UpdateLocale(L)
 end
 --@end-non-debug@]===]

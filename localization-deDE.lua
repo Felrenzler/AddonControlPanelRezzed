@@ -1,4 +1,4 @@
-if not ACP then return end
+if not ACPR then return end
 
 
 --[===[@non-debug@
@@ -6,7 +6,7 @@ if not ACP then return end
 --@localization(locale="deDE", format="lua_table")@
 
 if (GetLocale() == "deDE") then
-	ACP:UpdateLocale(L)
+	ACPR:UpdateLocale(L)
 end
 
 --@end-non-debug@]===]

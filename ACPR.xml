@@ -1,7 +1,7 @@
 <!-- edited with XMLSpy v2007 (http://www.altova.com) by jon (n/a) -->
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/ W:\WORLDO~1\BLIZZA~1\FrameXML\UI.xsd">
-    <Button name="ACP_AddonListEntryTemplate" virtual="true">
+    <Button name="ACPR_AddonListEntryTemplate" virtual="true">
         <Size>
             <AbsDimension x="520" y="16"/>
         </Size>
@@ -56,7 +56,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ACP:Collapse_OnClick(self:GetParent())
+                        ACPR:Collapse_OnClick(self:GetParent())
                     </OnClick>
                 </Scripts>
                 <NormalTexture name="$parentIcon"/>
@@ -75,10 +75,10 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ACP:Security_OnClick(self:GetParent().addon)
+                        ACPR:Security_OnClick(self:GetParent().addon)
                     </OnClick>
                     <OnEnter>
-                        ACP:ShowSecurityTooltip(self)
+                        ACPR:ShowSecurityTooltip(self)
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide()
@@ -99,7 +99,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ACP:AddonList_LoadNow(self:GetParent().addon);
+                        ACPR:AddonList_LoadNow(self:GetParent().addon);
                     </OnClick>
                 </Scripts>
             </Button>
@@ -116,13 +116,13 @@
                 </Anchors>
                 <Scripts>
                     <OnEnter>
-                        ACP:ShowHintTooltip(self, self.addon)
+                        ACPR:ShowHintTooltip(self, self.addon)
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide()
                     </OnLeave>
                     <OnClick>
-                        ACP:AddonList_Enable(self:GetParent().addon, self:GetChecked(),
+                        ACPR:AddonList_Enable(self:GetParent().addon, self:GetChecked(),
                             IsShiftKeyDown(), IsControlKeyDown(), self:GetParent().category);
                     </OnClick>
                 </Scripts>
@@ -135,7 +135,7 @@
         </Frames>
         <Scripts>
             <OnEnter>
-                ACP:ShowTooltip(self, self.addon)
+                ACPR:ShowTooltip(self, self.addon)
             </OnEnter>
             <OnLeave>
                 GameTooltip:Hide()
@@ -171,11 +171,11 @@
             <!--<OnClick>-->
                 <!--PlaySound("igMainMenuOption");-->
                 <!--HideUIPanel(GameMenuFrame);-->
-                <!--ShowUIPanel(ACP_AddonList);-->
+                <!--ShowUIPanel(ACPR_AddonList);-->
             <!--</OnClick>-->
         <!--</Scripts>-->
     <!--</Button>-->
-    <Frame name="ACP_AddonList" hidden="true" toplevel="true" enableMouse="true" moveable="true" enableKeyboard="false">
+    <Frame name="ACPR_AddonList" hidden="true" toplevel="true" enableMouse="true" moveable="true" enableKeyboard="false">
         <Size>
             <AbsDimension x="640" y="512"/>
         </Size>
@@ -186,7 +186,7 @@
             <AbsInset left="0" right="44" top="0" bottom="13"/>
         </HitRectInsets>
         <Frames>
-            <CheckButton name="ACPAddonListForceLoad">
+            <CheckButton name="ACPRAddonListForceLoad">
                 <Size>
                     <AbsDimension x="32" y="32"/>
                 </Size>
@@ -216,7 +216,7 @@
                         else
                             SetAddonVersionCheck(true);
                         end
-                        ACP:ReloadAddonList()
+                        ACPR:ReloadAddonList()
                     </OnClick>
                 </Scripts>
                 <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
@@ -236,12 +236,12 @@
             </Button>
             <Button name="$parentSortDropDown" inherits="UIDropDownMenuTemplate">
                 <Anchors>
-                    <Anchor point="RIGHT" relativeTo="ACPAddonListForceLoad" relativePoint="LEFT" x="-120" y="0"/>
+                    <Anchor point="RIGHT" relativeTo="ACPRAddonListForceLoad" relativePoint="LEFT" x="-120" y="0"/>
 
                 </Anchors>
                 <Scripts>
                     <OnShow>
-                        ACP:SortDropDown_OnShow(self)
+                        ACPR:SortDropDown_OnShow(self)
                     </OnShow>
                 </Scripts>
             </Button>
@@ -258,7 +258,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ACP:DisableAll_OnClick(self)
+                        ACPR:DisableAll_OnClick(self)
                     </OnClick>
                 </Scripts>
             </Button>
@@ -276,7 +276,7 @@
                 <Scripts>
                     <OnClick>
                         EnableAllAddOns()
-                        ACP:AddonList_OnShow(self)
+                        ACPR:AddonList_OnShow(self)
                     </OnClick>
                 </Scripts>
             </Button>
@@ -293,7 +293,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ACP:CollapseAll_OnClick(self)
+                        ACPR:CollapseAll_OnClick(self)
                     </OnClick>
                 </Scripts>
                 <NormalTexture name="$parentIcon" file="Interface\Minimap\UI-Minimap-ZoomOutButton-Up"/>
@@ -312,7 +312,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ACP:SetButton_OnClick(self);
+                        ACPR:SetButton_OnClick(self);
                     </OnClick>
                 </Scripts>
             </Button>
@@ -343,14 +343,14 @@
                 <Scripts>
                     <OnClick>
                         if (self:GetChecked()) then
-                            ACP:ToggleRecursion(true);
+                            ACPR:ToggleRecursion(true);
                         else
-                            ACP:ToggleRecursion(false);
+                            ACPR:ToggleRecursion(false);
                         end
                     </OnClick>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                        GameTooltip:SetText(ACP.L["Resurse-ToolTip"], nil, nil, nil, nil, 1);
+                        GameTooltip:SetText(ACPR.L["Resurse-ToolTip"], nil, nil, nil, nil, 1);
                     </OnEnter>
                     <OnLeave>
                         GameTooltip:Hide();
@@ -392,11 +392,11 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        HideUIPanel(ACP_AddonList);
+                        HideUIPanel(ACPR_AddonList);
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentEntry1" inherits="ACP_AddonListEntryTemplate" id="1">
+            <Button name="$parentEntry1" inherits="ACPR_AddonListEntryTemplate" id="1">
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
@@ -405,7 +405,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry2" inherits="ACP_AddonListEntryTemplate" id="2">
+            <Button name="$parentEntry2" inherits="ACPR_AddonListEntryTemplate" id="2">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry1" relativePoint="BOTTOM">
                         <Offset>
@@ -414,7 +414,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry3" inherits="ACP_AddonListEntryTemplate" id="3">
+            <Button name="$parentEntry3" inherits="ACPR_AddonListEntryTemplate" id="3">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry2" relativePoint="BOTTOM">
                         <Offset>
@@ -423,7 +423,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry4" inherits="ACP_AddonListEntryTemplate" id="4">
+            <Button name="$parentEntry4" inherits="ACPR_AddonListEntryTemplate" id="4">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry3" relativePoint="BOTTOM">
                         <Offset>
@@ -432,7 +432,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry5" inherits="ACP_AddonListEntryTemplate" id="5">
+            <Button name="$parentEntry5" inherits="ACPR_AddonListEntryTemplate" id="5">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry4" relativePoint="BOTTOM">
                         <Offset>
@@ -441,7 +441,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry6" inherits="ACP_AddonListEntryTemplate" id="6">
+            <Button name="$parentEntry6" inherits="ACPR_AddonListEntryTemplate" id="6">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry5" relativePoint="BOTTOM">
                         <Offset>
@@ -450,7 +450,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry7" inherits="ACP_AddonListEntryTemplate" id="7">
+            <Button name="$parentEntry7" inherits="ACPR_AddonListEntryTemplate" id="7">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry6" relativePoint="BOTTOM">
                         <Offset>
@@ -459,7 +459,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry8" inherits="ACP_AddonListEntryTemplate" id="8">
+            <Button name="$parentEntry8" inherits="ACPR_AddonListEntryTemplate" id="8">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry7" relativePoint="BOTTOM">
                         <Offset>
@@ -468,7 +468,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry9" inherits="ACP_AddonListEntryTemplate" id="9">
+            <Button name="$parentEntry9" inherits="ACPR_AddonListEntryTemplate" id="9">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry8" relativePoint="BOTTOM">
                         <Offset>
@@ -477,7 +477,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry10" inherits="ACP_AddonListEntryTemplate" id="10">
+            <Button name="$parentEntry10" inherits="ACPR_AddonListEntryTemplate" id="10">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry9" relativePoint="BOTTOM">
                         <Offset>
@@ -486,7 +486,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry11" inherits="ACP_AddonListEntryTemplate" id="11">
+            <Button name="$parentEntry11" inherits="ACPR_AddonListEntryTemplate" id="11">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry10" relativePoint="BOTTOM">
                         <Offset>
@@ -495,7 +495,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry12" inherits="ACP_AddonListEntryTemplate" id="12">
+            <Button name="$parentEntry12" inherits="ACPR_AddonListEntryTemplate" id="12">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry11" relativePoint="BOTTOM">
                         <Offset>
@@ -504,7 +504,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry13" inherits="ACP_AddonListEntryTemplate" id="13">
+            <Button name="$parentEntry13" inherits="ACPR_AddonListEntryTemplate" id="13">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry12" relativePoint="BOTTOM">
                         <Offset>
@@ -513,7 +513,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry14" inherits="ACP_AddonListEntryTemplate" id="14">
+            <Button name="$parentEntry14" inherits="ACPR_AddonListEntryTemplate" id="14">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry13" relativePoint="BOTTOM">
                         <Offset>
@@ -522,7 +522,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry15" inherits="ACP_AddonListEntryTemplate" id="15">
+            <Button name="$parentEntry15" inherits="ACPR_AddonListEntryTemplate" id="15">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry14" relativePoint="BOTTOM">
                         <Offset>
@@ -531,7 +531,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry16" inherits="ACP_AddonListEntryTemplate" id="16">
+            <Button name="$parentEntry16" inherits="ACPR_AddonListEntryTemplate" id="16">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry15" relativePoint="BOTTOM">
                         <Offset>
@@ -540,7 +540,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry17" inherits="ACP_AddonListEntryTemplate" id="17">
+            <Button name="$parentEntry17" inherits="ACPR_AddonListEntryTemplate" id="17">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry16" relativePoint="BOTTOM">
                         <Offset>
@@ -549,7 +549,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry18" inherits="ACP_AddonListEntryTemplate" id="18">
+            <Button name="$parentEntry18" inherits="ACPR_AddonListEntryTemplate" id="18">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry17" relativePoint="BOTTOM">
                         <Offset>
@@ -558,7 +558,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry19" inherits="ACP_AddonListEntryTemplate" id="19">
+            <Button name="$parentEntry19" inherits="ACPR_AddonListEntryTemplate" id="19">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry18" relativePoint="BOTTOM">
                         <Offset>
@@ -567,7 +567,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentEntry20" inherits="ACP_AddonListEntryTemplate" id="20">
+            <Button name="$parentEntry20" inherits="ACPR_AddonListEntryTemplate" id="20">
                 <Anchors>
                     <Anchor point="TOP" relativeTo="$parentEntry19" relativePoint="BOTTOM">
                         <Offset>
@@ -630,7 +630,7 @@
                 </Layers>
                 <Scripts>
                     <OnVerticalScroll>
-                        FauxScrollFrame_OnVerticalScroll(self, offset, ACP_LINEHEIGHT, function() ACP:AddonList_OnShow_Fast() end);
+                        FauxScrollFrame_OnVerticalScroll(self, offset, ACPR_LINEHEIGHT, function() ACPR:AddonList_OnShow_Fast() end);
                     </OnVerticalScroll>
                 </Scripts>
             </ScrollFrame>
@@ -720,16 +720,16 @@
         </Layers>
         <Scripts>
             <OnLoad>
-                ACP:OnLoad(self)
+                ACPR:OnLoad(self)
             </OnLoad>
             <OnEvent>
-                ACP:OnEvent(self, event, ...)
+                ACPR:OnEvent(self, event, ...)
             </OnEvent>
             <OnShow>
-                ACP:AddonList_OnShow(self)
+                ACPR:AddonList_OnShow(self)
             </OnShow>
             <!--<OnKeyDown>-->
-            <!--ACP:OnKeyDown(self, key);-->
+            <!--ACPR:OnKeyDown(self, key);-->
             <!--</OnKeyDown>-->
             <OnDragStart>
                 self:StartMoving()

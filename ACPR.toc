@@ -16,8 +16,8 @@
 ## Version: @project-version@ 
 ## SavedVariables: ACPR_Data
 
-## X-Curse-Project-ID: 7529
-## X-WoWI-ID: 17869
+## X-Curse-Project-ID: 
+## X-WoWI-ID: 
 
 
 ## X-Credits: ACPr is based on ACP which is based now on rMCP, which is MCP modified by Rophy, originally by Saien.

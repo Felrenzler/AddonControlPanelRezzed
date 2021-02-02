@@ -1,10 +1,10 @@
-if not ACP then return end
+if not ACPR then return end
 
 if (GetLocale() == "enUS") then
-	ACP:UpdateLocale(
+	ACPR:UpdateLocale(
 
 		{
-			["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: Some protected addons aren't loaded. Reload now?",
+			["ACPR: Some protected addons aren't loaded. Reload now?"] = "ACPR: Some protected addons aren't loaded. Reload now?",
 			["Active Embeds"] = "Active Embeds",
 			AddOns = "AddOns",
 			["Addon <%s> not valid"] = "Addon <%s> not valid",

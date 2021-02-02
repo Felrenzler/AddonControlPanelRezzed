@@ -3,12 +3,12 @@
 --==============
 ACP = {}
 
-ACP_LINEHEIGHT = 16
+ACPR_LINEHEIGHT = 16
 
-ACP.CheckEvents = 0
+ACPR.CheckEvents = 0
 
 
-ACP.TAGS = {
+ACPR.TAGS = {
     PART_OF = "X-Part-Of",
     INTERFACE_MIN = "X-Min-Interface",
     INTERFACE_MIN_ORG = "X-Since-Interface",
@@ -18,10 +18,10 @@ ACP.TAGS = {
 }
 
 -- Handle various annoying special case names
-function ACP:SpecialCaseName(name)
-    local partof = GetAddOnMetadata(name, ACP.TAGS.PART_OF)
+function ACPR:SpecialCaseName(name)
+    local partof = GetAddOnMetadata(name, ACPR.TAGS.PART_OF)
     if partof == nil then
-        partof = GetAddOnMetadata(name, ACP.TAGS.CHILD_OF)
+        partof = GetAddOnMetadata(name, ACPR.TAGS.CHILD_OF)
     end
 
     if partof ~= nil then
@@ -137,7 +137,7 @@ local L = setmetatable({}, {
 
 --]]
 local masterAddonList = {}
-ACP.masterAddonList = masterAddonList
+ACPR.masterAddonList = masterAddonList
 
 
 --[[
@@ -159,37 +159,37 @@ ACP.masterAddonList = masterAddonList
 
 	- If type(addonIndex) == 'string', it will be shown in the panel as a category header.
 	- The collapse state will be retrieved from the saved variables: collapsedAddons.
-	- If addonIndex > GetNumAddOns(), it''s a Blizzard addon, the index references to ACP_BLIZZARD_ADDONS[addonIndex - GetNumAddOns()].
+	- If addonIndex > GetNumAddOns(), it''s a Blizzard addon, the index references to ACPR_BLIZZARD_ADDONS[addonIndex - GetNumAddOns()].
 	- otherwise, addonIndex is the index used in GetAddOnInfo().
 
 	This list will be rebuilt whenever use expanded/collapsed a category, or when user changed the sorting criteria.
 
 --]]
 local sortedAddonList = {}
-ACP.sortedAddonList = sortedAddonList
+ACPR.sortedAddonList = sortedAddonList
 
 --[[
 	addonListBuilders : a table of functions used to build masterAddonList
 
 	To define your own sorting criteria, check the default builder functions as examples.
-	Note if you create the build function in an external scope, you cannot access to the ACP local variables,
-	  i.e. masterAddonList and ACP_BLIZZARD_ADDONS, but they can be accessed through ACP. e.g.:
+	Note if you create the build function in an external scope, you cannot access to the ACPR local variables,
+	  i.e. masterAddonList and ACPR_BLIZZARD_ADDONS, but they can be accessed through ACPR. e.g.:
 
 		function MyExternalBuilder()
-			local masterAddonList = ACP.masterAddonList
-			local bzAddons = ACP.ACP_BLIZZARD_ADDONS
+			local masterAddonList = ACPR.masterAddonList
+			local bzAddons = ACPR.ACPR_BLIZZARD_ADDONS
 			(Now build the masterAddonList)
 		end
 
 	When you have defined your own builder function, simple add them to the table by:
 
-		ACP.addonListBuilders["MyExternalBuilder"] = MyExternalBuilder
+		ACPR.addonListBuilders["MyExternalBuilder"] = MyExternalBuilder
 
-	After everything is done, the custom defined function can be accessed from the ACP sorter drop down menu.
+	After everything is done, the custom defined function can be accessed from the ACPR sorter drop down menu.
 
 ]]
 local addonListBuilders = {}
-ACP.addonListBuilders = addonListBuilders
+ACPR.addonListBuilders = addonListBuilders
 
 
 
@@ -229,7 +229,7 @@ function CLR:Off(txt) return CLR:Colorize('ff0000', txt) end
 function CLR:Bool(b, txt) if b then return CLR:On(txt) else return CLR:Off(txt) end end
 
 function CLR:AddonStatus(addon, txt)
-    local color = ACP:GetAddonStatus(addon)
+    local color = ACPR:GetAddonStatus(addon)
     return CLR:Colorize(color, txt)
 end
 
@@ -246,7 +246,7 @@ local function getreason(r)
     return reasons[r]
 end
 
-function ACP:IsAddonCompatibleWithCurrentIntefaceVersion(addon)
+function ACPR:IsAddonCompatibleWithCurrentIntefaceVersion(addon)
     local build = select(4, GetBuildInfo())
 
     local addonnum = tonumber(addon)
@@ -254,11 +254,11 @@ function ACP:IsAddonCompatibleWithCurrentIntefaceVersion(addon)
         return true -- Get to the choppa!
     end
 
-    local max_supported = GetAddOnMetadata(addonnum, ACP.TAGS.INTERFACE_MAX) or
-        GetAddOnMetadata(addonnum, ACP.TAGS.INTERFACE_MAX_ORG)
+    local max_supported = GetAddOnMetadata(addonnum, ACPR.TAGS.INTERFACE_MAX) or
+        GetAddOnMetadata(addonnum, ACPR.TAGS.INTERFACE_MAX_ORG)
 
-    local min_supported = GetAddOnMetadata(addonnum, ACP.TAGS.INTERFACE_MIN) or
-        GetAddOnMetadata(addonnum, ACP.TAGS.INTERFACE_MIN_ORG)
+    local min_supported = GetAddOnMetadata(addonnum, ACPR.TAGS.INTERFACE_MIN) or
+        GetAddOnMetadata(addonnum, ACPR.TAGS.INTERFACE_MIN_ORG)
 
     --print("Min: "..tostring(min_supported).."  Max: "..tostring(max_supported))
 
@@ -274,7 +274,7 @@ function ACP:IsAddonCompatibleWithCurrentIntefaceVersion(addon)
 
 end
 
-function ACP:GetAddonCompatibilitySummary(addon)
+function ACPR:GetAddonCompatibilitySummary(addon)
     local high, low = self:IsAddonCompatibleWithCurrentIntefaceVersion(addon)
 
     if low == false then
@@ -288,7 +288,7 @@ function ACP:GetAddonCompatibilitySummary(addon)
     return nil -- Compatibility not specified
 end
 
-function ACP:GetAddonStatus(addon)
+function ACPR:GetAddonStatus(addon)
     local addon = addon
 
     -- Hi, i'm Mr Kludge! Whats your name?
@@ -359,14 +359,14 @@ local function reclaim(t)
     cache[t] = true
 end
 
-local ACP_ADDON_NAME = "ACP"
-local ACP_FRAME_NAME = "ACP_AddonList"
+local ACPR_ADDON_NAME = "ACPR"
+local ACPR_FRAME_NAME = "ACPR_AddonList"
 local playerClass = nil
-local ACP_SET_SIZE = 25
-local ACP_MAXADDONS = 20
-local ACP_DefaultSet = {}
-local ACP_DEFAULT_SET = 0
-local ACP_BLIZZARD_ADDONS = {
+local ACPR_SET_SIZE = 25
+local ACPR_MAXADDONS = 20
+local ACPR_DefaultSet = {}
+local ACPR_DEFAULT_SET = 0
+local ACPR_BLIZZARD_ADDONS = {
     "Blizzard_AchievementUI",
     "Blizzard_ArchaeologyUI",
     "Blizzard_ArenaUI",
@@ -414,8 +414,8 @@ local ACP_BLIZZARD_ADDONS = {
     "Blizzard_VoidStorageUI",
 }
 
-local NUM_BLIZZARD_ADDONS = #ACP_BLIZZARD_ADDONS
-ACP.ACP_BLIZZARD_ADDONS = ACP_BLIZZARD_ADDONS
+local NUM_BLIZZARD_ADDONS = #ACPR_BLIZZARD_ADDONS
+ACPR.ACPR_BLIZZARD_ADDONS = ACPR_BLIZZARD_ADDONS
 local enabledList -- Used to prevent recursive loop in EnableAddon.
 
 local function ParseVersion(version)
@@ -437,14 +437,14 @@ local function GetAddonIndex(addon, noerr)
     if type(addon) == 'number' then
         return addon
     elseif type(addon) == 'string' then
-        local addonIndex = ACP_BLIZZARD_ADDONS[addon]
+        local addonIndex = ACPR_BLIZZARD_ADDONS[addon]
         if addonIndex then
             return addonIndex + GetNumAddOns()
         else
             if addon == "" then return nil end
             for i=1,GetNumAddOns() do
-                local name = ACP:SpecialCaseName(GetAddOnInfo(i))
-                if name:lower() == ACP:SpecialCaseName(addon):lower() then
+                local name = ACPR:SpecialCaseName(GetAddOnInfo(i))
+                if name:lower() == ACPR:SpecialCaseName(addon):lower() then
                     return i
                 end
             end
@@ -460,49 +460,49 @@ local function GetAddonIndex(addon, noerr)
     end
 end
 
-function ACP:ToggleRecursion(val)
+function ACPR:ToggleRecursion(val)
     if val == nil then
         savedVar.NoRecurse = not savedVar.NoRecurse
     else
         savedVar.NoRecurse = not val
     end
 
-    local frame = _G[ACP_FRAME_NAME .. "_NoRecurse"]
+    local frame = _G[ACPR_FRAME_NAME .. "_NoRecurse"]
 
 
     frame:SetChecked(not savedVar.NoRecurse)
 
---    ACP:Print(L["Recursive Enable is now %s"]:format(CLR:Bool(not savedVar.NoRecurse, tostring(not savedVar.NoRecurse))))
+--    ACPR:Print(L["Recursive Enable is now %s"]:format(CLR:Bool(not savedVar.NoRecurse, tostring(not savedVar.NoRecurse))))
 end
 
-function ACP:OnLoad(this)
+function ACPR:OnLoad(this)
 
     self.L = L
-    self.frame = _G[ACP_FRAME_NAME]
+    self.frame = _G[ACPR_FRAME_NAME]
 
     self.frame:SetMovable(true)
 
     -- Make sure we are properly scaled.
     self.frame:SetScale(UIParent:GetEffectiveScale());
 
-    for i=1,ACP_MAXADDONS do
-        local button = _G[ACP_FRAME_NAME .. "Entry" .. i .. "LoadNow"]
+    for i=1,ACPR_MAXADDONS do
+        local button = _G[ACPR_FRAME_NAME .. "Entry" .. i .. "LoadNow"]
         button:SetText(L["Load"])
     end
 
-    _G[ACP_FRAME_NAME .. "DisableAll"]:SetText(L["Disable All"])
-    _G[ACP_FRAME_NAME .. "EnableAll"]:SetText(L["Enable All"])
-    _G[ACP_FRAME_NAME .. "SetButton"]:SetText(L["Sets"])
-    _G[ACP_FRAME_NAME .. "_ReloadUI"]:SetText(L["ReloadUI"])
-    _G[ACP_FRAME_NAME .. "BottomClose"]:SetText(L["Close"])
+    _G[ACPR_FRAME_NAME .. "DisableAll"]:SetText(L["Disable All"])
+    _G[ACPR_FRAME_NAME .. "EnableAll"]:SetText(L["Enable All"])
+    _G[ACPR_FRAME_NAME .. "SetButton"]:SetText(L["Sets"])
+    _G[ACPR_FRAME_NAME .. "_ReloadUI"]:SetText(L["ReloadUI"])
+    _G[ACPR_FRAME_NAME .. "BottomClose"]:SetText(L["Close"])
 
 
-    UIPanelWindows[ACP_FRAME_NAME] = {
+    UIPanelWindows[ACPR_FRAME_NAME] = {
         area = "center",
         pushable = 0,
         whileDead = 1
     }
-    StaticPopupDialogs["ACP_RELOADUI"] = {
+    StaticPopupDialogs["ACPR_RELOADUI"] = {
         text = L["Reload your User Interface?"],
         button1 = ACCEPT,
         button2 = CANCEL,
@@ -516,15 +516,15 @@ function ACP:OnLoad(this)
         preferredIndex = 3,
     }
 
-    StaticPopupDialogs["ACP_RELOADUI_START"] = {
-        text = L["ACP: Some protected addons aren't loaded. Reload now?"],
+    StaticPopupDialogs["ACPR_RELOADUI_START"] = {
+        text = L["ACPR: Some protected addons aren't loaded. Reload now?"],
         button1 = ACCEPT,
         button2 = CANCEL,
         OnAccept = function(this)
             ReloadUI()
         end,
         OnCancel = function(this, data, reason)
-            ACP_Data.reloadRequired = nil
+            ACPR_Data.reloadRequired = nil
         end,
         timeout = 10,
         hideOnEscape = 1,
@@ -533,7 +533,7 @@ function ACP:OnLoad(this)
         preferredIndex = 3,
     }
 
-    StaticPopupDialogs["ACP_SAVESET"] = {
+    StaticPopupDialogs["ACPR_SAVESET"] = {
         text = L["Save the current addon list to [%s]?"],
         button1 = YES,
         button2 = CANCEL,
@@ -563,7 +563,7 @@ function ACP:OnLoad(this)
         popup:Hide()
     end
 
-    StaticPopupDialogs["ACP_RENAMESET"] = {
+    StaticPopupDialogs["ACPR_RENAMESET"] = {
         text = L["Enter the new name for [%s]:"],
         button1 = YES,
         button2 = CANCEL,
@@ -580,16 +580,16 @@ function ACP:OnLoad(this)
         preferredIndex = 3,
     }
 
-    for i,v in ipairs(ACP_BLIZZARD_ADDONS) do
-        ACP_BLIZZARD_ADDONS[v] = i
+    for i,v in ipairs(ACPR_BLIZZARD_ADDONS) do
+        ACPR_BLIZZARD_ADDONS[v] = i
     end
     local title = "Addon Control Panel"
-    local version = GetAddOnMetadata(ACP_ADDON_NAME, "Version")
+    local version = GetAddOnMetadata(ACPR_ADDON_NAME, "Version")
     if version then
         version = ParseVersion(version)
         title = title .. " (" .. version .. ")"
     end
-    ACP_AddonListHeaderTitle:SetText(title)
+    ACPR_AddonListHeaderTitle:SetText(title)
     this:RegisterEvent("ADDON_LOADED")
 
     this:RegisterForDrag("LeftButton");
@@ -597,9 +597,9 @@ function ACP:OnLoad(this)
     local _
     playerClass, _ = UnitClass("player")
 
-    SlashCmdList["ACP"] = self.SlashHandler
+    SlashCmdList["ACPR"] = self.SlashHandler
 
-    SLASH_ACP1 = "/acp"
+    SLASH_ACP1 = "/acpr"
 end
 
 
@@ -609,14 +609,14 @@ end
 
 local eventLibrary, bugeventreged
 
-function ACP:OnEvent(this, event, arg1, arg2, arg3)
-    if event == "ADDON_LOADED" and arg1 == "ACP" then
-        if not ACP_Data then ACP_Data = {} end
+function ACPR:OnEvent(this, event, arg1, arg2, arg3)
+    if event == "ADDON_LOADED" and arg1 == "ACPR" then
+        if not ACPR_Data then ACPR_Data = {} end
 
-        savedVar = ACP_Data
+        savedVar = ACPR_Data
 
         savedVar.ProtectedAddons = savedVar.ProtectedAddons or {
-            ["ACP"] = true
+            ["ACPR"] = true
         }
 
         if not savedVar.collapsed then
@@ -625,9 +625,9 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
         collapsedAddons = savedVar.collapsed
 
         if not savedVar.sorter then
-            ACP:SetMasterAddonBuilder(GROUP_BY_NAME)
+            ACPR:SetMasterAddonBuilder(GROUP_BY_NAME)
         else
-            ACP:ReloadAddonList()
+            ACPR:ReloadAddonList()
         end
 
         if savedVar.NoChildren == nil then
@@ -637,8 +637,8 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
         for i=1,GetNumAddOns() do
             if IsAddOnLoaded(i) then
                 local name = GetAddOnInfo(i)
-                if name ~= ACP_ADDON_NAME then
-                    table.insert(ACP_DefaultSet, name)
+                if name ~= ACPR_ADDON_NAME then
+                    table.insert(ACPR_DefaultSet, name)
                 end
             end
         end
@@ -648,7 +648,7 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
         self:MakeFrameScalable(self.frame, -46, 16)
 
         self:ToggleRecursion(not savedVar.NoRecurse)
-        _G[ACP_FRAME_NAME .. "_NoRecurseText"]:SetText(L["Recursive"])
+        _G[ACPR_FRAME_NAME .. "_NoRecurseText"]:SetText(L["Recursive"])
 
 
         this:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -682,7 +682,7 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
             savedVar.reloadRequired = nil
         end
         if savedVar.reloadRequired then
-            StaticPopup_Show("ACP_RELOADUI_START");
+            StaticPopup_Show("ACPR_RELOADUI_START");
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
         this:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -691,20 +691,20 @@ function ACP:OnEvent(this, event, arg1, arg2, arg3)
         GameMenuButtonAddons:SetScript("OnClick", function()
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
             HideUIPanel(GameMenuFrame);
-            ShowUIPanel(ACP_AddonList);
+            ShowUIPanel(ACPR_AddonList);
         end)
 
-    --        ACP:ProcessBugSack("session")
+    --        ACPR:ProcessBugSack("session")
     end
 
     if event == "ADDON_LOADED" then
-        ACP:ADDON_LOADED(arg1)
+        ACPR:ADDON_LOADED(arg1)
     end
 
 end
 
 
-function ACP:ResolveLibraryName(id)
+function ACPR:ResolveLibraryName(id)
     local a, name
     for a=1,GetNumAddOns() do
         local n = GetAddOnInfo(a)
@@ -719,69 +719,69 @@ function ACP:ResolveLibraryName(id)
 end
 
 
-local ACP_NORECURSE = "norecurse"
+local ACPR_NORECURSE = "norecurse"
 
-local ACP_ADD_SET_D = "addset"
-local ACP_REM_SET_D = "removeset"
-local ACP_DISABLEALL = "disableall"
+local ACPR_ADD_SET_D = "addset"
+local ACPR_REM_SET_D = "removeset"
+local ACPR_DISABLEALL = "disableall"
 
-local ACP_RESTOREDEFAULT = "default"
+local ACPR_RESTOREDEFAULT = "default"
 
-local ACP_COMMANDS = { ACP_NOCHILDREN, ACP_NORECURSE, ACP_ADD_SET_D, ACP_REM_SET_D, ACP_DISABLEALL, ACP_RESTOREDEFAULT }
+local ACPR_COMMANDS = { ACPR_NOCHILDREN, ACPR_NORECURSE, ACPR_ADD_SET_D, ACPR_REM_SET_D, ACPR_DISABLEALL, ACPR_RESTOREDEFAULT }
 
-function ACP.SlashHandler(msg)
+function ACPR.SlashHandler(msg)
     if type(msg) == "string" and msg:len() > 0 then
-        if msg == ACP_NOCHILDREN then
+        if msg == ACPR_NOCHILDREN then
             savedVar.NoChildren = not savedVar.NoChildren
-            ACP:Print(L["LoD Child Enable is now %s"]:format(CLR:Bool(not savedVar.NoChildren, tostring(not savedVar.NoChildren))))
+            ACPR:Print(L["LoD Child Enable is now %s"]:format(CLR:Bool(not savedVar.NoChildren, tostring(not savedVar.NoChildren))))
             return
         end
 
-        if msg == ACP_NORECURSE then
-            ACP:ToggleRecursion()
-            ACP:Print(L["Recursive Enable is now %s"]:format(CLR:Bool(not savedVar.NoRecurse, tostring(not savedVar.NoRecurse))))
+        if msg == ACPR_NORECURSE then
+            ACPR:ToggleRecursion()
+            ACPR:Print(L["Recursive Enable is now %s"]:format(CLR:Bool(not savedVar.NoRecurse, tostring(not savedVar.NoRecurse))))
             return
         end
 
-        if msg == ACP_DISABLEALL then
-            ACP:DisableAllAddons()
+        if msg == ACPR_DISABLEALL then
+            ACPR:DisableAllAddons()
             return
         end
 
-        if msg:find("^"..ACP_ADD_SET_D) then
-            local set = msg:sub(ACP_ADD_SET_D:len(), -1):match("%d+")
+        if msg:find("^"..ACPR_ADD_SET_D) then
+            local set = msg:sub(ACPR_ADD_SET_D:len(), -1):match("%d+")
             set = tonumber(set)
 
             if type(set) == "number" then
-                ACP:LoadSet(set)
+                ACPR:LoadSet(set)
                 return
             end
         end
 
-        if msg:find("^"..ACP_REM_SET_D) then
-            local set = msg:sub(ACP_REM_SET_D:len(), -1):match("%d+")
+        if msg:find("^"..ACPR_REM_SET_D) then
+            local set = msg:sub(ACPR_REM_SET_D:len(), -1):match("%d+")
             set = tonumber(set)
 
             if type(set) == "number" then
-                ACP:UnloadSet(set)
+                ACPR:UnloadSet(set)
                 return
             end
         end
 
-        if msg == ACP_RESTOREDEFAULT then
-            ACP:DisableAll_OnClick()
-            ACP:LoadSet(0)
+        if msg == ACPR_RESTOREDEFAULT then
+            ACPR:DisableAll_OnClick()
+            ACPR:LoadSet(0)
             return
         end
 
-        ACP:ShowSlashCommands()
+        ACPR:ShowSlashCommands()
     end
 
-    ACP:ToggleUI()
+    ACPR:ToggleUI()
 end
 
-function ACP:ShowSlashCommands()
-    ACP:Print("Valid commands: " .. table.concat(ACP_COMMANDS, ", "))
+function ACPR:ShowSlashCommands()
+    ACPR:Print("Valid commands: " .. table.concat(ACPR_COMMANDS, ", "))
 end
 
 
@@ -995,7 +995,7 @@ addonListBuilders[GROUP_BY_NAME] = function()
 
         local catA, catB
 
-        nameA, nameB = ACP:SpecialCaseName(nameA), ACP:SpecialCaseName(nameB)
+        nameA, nameB = ACPR:SpecialCaseName(nameA), ACPR:SpecialCaseName(nameB)
 
         if nameA:find("_") then
             catA, nameA = strsplit("_", nameA)
@@ -1024,11 +1024,11 @@ addonListBuilders[GROUP_BY_NAME] = function()
     local t2 = t
     t = {}
     for i,addonIndex in ipairs(t2) do
-        name = ACP:SpecialCaseName(GetAddOnInfo(addonIndex))
+        name = ACPR:SpecialCaseName(GetAddOnInfo(addonIndex))
 
         local acecategory = GetAddOnMetadata(addonIndex, "X-Category")
 
-        if (acecategory and acecategory:find("Library")) and not ACP:IsAddOnProtected(name) then
+        if (acecategory and acecategory:find("Library")) and not ACPR:IsAddOnProtected(name) then
             table.insert(libs, addonIndex)
         else
             local category, content = strsplit("_", name)
@@ -1070,7 +1070,7 @@ addonListBuilders[GROUP_BY_NAME] = function()
                 --    			table.remove(currPos, #currPos)
                 local addonpos = currPos[#currPos]
                 if addonpos then
-                    local addonname = ACP:SpecialCaseName(GetAddOnInfo(addonpos))
+                    local addonname = ACPR:SpecialCaseName(GetAddOnInfo(addonpos))
                     if (addonname == addon) then table.remove(currPos, #currPos) end
                     table.insert(list, t)
                     currPos = t
@@ -1088,23 +1088,23 @@ addonListBuilders[GROUP_BY_NAME] = function()
 end
 
 
-function ACP:ToggleUI()
+function ACPR:ToggleUI()
 --[[ added Mon Jul 30 12:14:24 CEST 2007 - fin
 
 wanted an easy way to toggle the UI on / off for CustomMenuFu
 
 NOTE: maybe change the slash handler to use this instead?
 ]]
-    if ACP_AddonList:IsShown() then
-        HideUIPanel(ACP_AddonList)
+    if ACPR_AddonList:IsShown() then
+        HideUIPanel(ACPR_AddonList)
     else
-        ShowUIPanel(ACP_AddonList)
+        ShowUIPanel(ACPR_AddonList)
     end
 end
 
 
 
-function ACP:ReloadAddonList()
+function ACPR:ReloadAddonList()
 
     local builder = savedVar.sorter
     if not builder then
@@ -1119,25 +1119,25 @@ function ACP:ReloadAddonList()
     func()
 
     self:RebuildSortedAddonList()
-    ACP:AddonList_OnShow()
+    ACPR:AddonList_OnShow()
 
 
-    ACP_AddonListSortDropDownText:SetText(builder)
-    local button = _G[ACP_FRAME_NAME .. "SortDropDown"]
+    ACPR_AddonListSortDropDownText:SetText(builder)
+    local button = _G[ACPR_FRAME_NAME .. "SortDropDown"]
     UIDropDownMenu_SetSelectedValue(button, builder)
 
 end
 
---function ACP:OnKeyDown(this, key)
+--function ACPR:OnKeyDown(this, key)
 --   -- print(this, key)
 --	if ( key == "ESCAPE" ) then
---		HideUIPanel(ACP_AddonList);
+--		HideUIPanel(ACPR_AddonList);
 --	elseif ( key == "PRINTSCREEN" ) then
 --		Screenshot();
 --	elseif ( key == "PAGEUP" ) then
---		ScrollFrameTemplate_OnMouseWheel(ACP_AddonList_ScrollFrame, 1)
+--		ScrollFrameTemplate_OnMouseWheel(ACPR_AddonList_ScrollFrame, 1)
 --	elseif ( key == "PAGEDOWN" ) then
---		ScrollFrameTemplate_OnMouseWheel(ACP_AddonList_ScrollFrame, -1)
+--		ScrollFrameTemplate_OnMouseWheel(ACPR_AddonList_ScrollFrame, -1)
 --	end
 --end
 
@@ -1147,22 +1147,22 @@ end
 -- Shift will invert the use of recursion
 -- Ctrl will invert the use of LoD children
 --
-function ACP:EnableAddon(addon, shift, ctrl)
-    local norecurse = ACP_Data.NoRecurse
+function ACPR:EnableAddon(addon, shift, ctrl)
+    local norecurse = ACPR_Data.NoRecurse
     if shift then norecurse = not norecurse end
 
-    local nochildren = ACP_Data.NoChildren
+    local nochildren = ACPR_Data.NoChildren
     if ctrl then nochildren = not nochildren end
 
     if norecurse then
         EnableAddOn(addon, UnitName("player"))
     else
         local name = GetAddOnInfo(addon)
-        ACP_EnableRecurse(name, nochildren)
+        ACPR_EnableRecurse(name, nochildren)
     end
 end
 
-function ACP:ReadDependencies(t, ...)
+function ACPR:ReadDependencies(t, ...)
     for k in pairs(t) do
         t[k] = nil
     end
@@ -1175,7 +1175,7 @@ function ACP:ReadDependencies(t, ...)
     return t
 end
 
-function ACP:EnableDependencies(addon)
+function ACPR:EnableDependencies(addon)
     local deps = self:ReadDependencies(acquire(), GetAddOnDependencies(addon))
 
     if next(deps) then
@@ -1188,7 +1188,7 @@ function ACP:EnableDependencies(addon)
 
 end
 
-function ACP:FindAddon(list, name)
+function ACPR:FindAddon(list, name)
     for i,v in ipairs(list) do
         if v == name then
             return true
@@ -1197,7 +1197,7 @@ function ACP:FindAddon(list, name)
     return nil
 end
 
-function ACP:FindAddonKey(list, name)
+function ACPR:FindAddonKey(list, name)
     for k,v in pairs(list) do
         if k == name then
             return true
@@ -1207,11 +1207,11 @@ function ACP:FindAddonKey(list, name)
 end
 
 
-function ACP:Print(msg, r, g, b)
-    DEFAULT_CHAT_FRAME:AddMessage("ACP: " .. msg, r, g, b)
+function ACPR:Print(msg, r, g, b)
+    DEFAULT_CHAT_FRAME:AddMessage("ACPR: " .. msg, r, g, b)
 end
 
-function ACP:CollapseAll(collapse)
+function ACPR:CollapseAll(collapse)
     local categories = {}
 
     for i,addon in ipairs(masterAddonList) do
@@ -1228,7 +1228,7 @@ function ACP:CollapseAll(collapse)
     self:RebuildSortedAddonList()
 end
 
-function ACP:SaveSet(set)
+function ACPR:SaveSet(set)
     if not savedVar.AddonSet then
         savedVar.AddonSet = {}
     end
@@ -1251,7 +1251,7 @@ function ACP:SaveSet(set)
         name =  GetAddOnInfo(i)
         enabled = GetAddOnEnableState(UnitName("player"), name) > 0;
 
-        if enabled and name ~= ACP_ADDON_NAME and not ACP:IsAddOnProtected(name) then
+        if enabled and name ~= ACPR_ADDON_NAME and not ACPR:IsAddOnProtected(name) then
             table.insert(addonSet, name)
         end
     end
@@ -1260,8 +1260,8 @@ function ACP:SaveSet(set)
 
 end
 
-function ACP:GetSetName(set)
-    if set == ACP_DEFAULT_SET then
+function ACPR:GetSetName(set)
+    if set == ACPR_DEFAULT_SET then
         return L["Default"]
     elseif set == playerClass then
         return playerClass
@@ -1272,12 +1272,12 @@ function ACP:GetSetName(set)
     end
 end
 
-function ACP:UnloadSet(set)
+function ACPR:UnloadSet(set)
 
     local list
 
-    if set == ACP_DEFAULT_SET then
-        list = ACP_DefaultSet
+    if set == ACPR_DEFAULT_SET then
+        list = ACPR_DefaultSet
     else
         if not savedVar or not savedVar.AddonSet or not savedVar.AddonSet[set] then return end
         list = savedVar.AddonSet[set]
@@ -1286,26 +1286,26 @@ function ACP:UnloadSet(set)
     local name
     for i=1,GetNumAddOns() do
         name = GetAddOnInfo(i)
-        if name ~= ACP_ADDON_NAME and ACP:FindAddon(list, name) and not ACP:IsAddOnProtected(name) then
+        if name ~= ACPR_ADDON_NAME and ACPR:FindAddon(list, name) and not ACPR:IsAddOnProtected(name) then
             DisableAddOn(name, UnitName("player"))
         end
     end
 
     self:Print(L["Addons [%s] Unloaded."]:format(self:GetSetName(set)))
-    ACP:AddonList_OnShow()
+    ACPR:AddonList_OnShow()
 end
 
-function ACP:ClearSelectionAndLoadSet(set)
+function ACPR:ClearSelectionAndLoadSet(set)
     self:DisableAll_OnClick()
 
     self:LoadSet(set)
 end
 
-function ACP:LoadSet(set)
+function ACPR:LoadSet(set)
     local list
 
-    if set == ACP_DEFAULT_SET then
-        list = ACP_DefaultSet
+    if set == ACPR_DEFAULT_SET then
+        list = ACPR_DefaultSet
     else
         if not savedVar or not savedVar.AddonSet or not savedVar.AddonSet[set] then return end
         list = savedVar.AddonSet[set]
@@ -1315,7 +1315,7 @@ function ACP:LoadSet(set)
     local name
     for i=1,GetNumAddOns() do
         name = GetAddOnInfo(i)
-        if ACP:FindAddon(list, name) and not ACP:IsAddOnProtected(name) then
+        if ACPR:FindAddon(list, name) and not ACPR:IsAddOnProtected(name) then
             self:EnableAddon(name)
         end
     end
@@ -1324,22 +1324,22 @@ function ACP:LoadSet(set)
     enabledList = nil
 
     self:Print(L["Addons [%s] Loaded."]:format(self:GetSetName(set)))
-    ACP:AddonList_OnShow()
+    ACPR:AddonList_OnShow()
 
 end
 
-function ACP:IsAddOnProtected(addon)
+function ACPR:IsAddOnProtected(addon)
     local addon = GetAddOnInfo(addon)
     if addon and savedVar.ProtectedAddons then
         return savedVar.ProtectedAddons[addon]
     end
 end
 
-function ACP:Security_OnClick(addon)
+function ACPR:Security_OnClick(addon)
     local addon = GetAddOnInfo(addon)
     if addon then
         savedVar.ProtectedAddons = savedVar.ProtectedAddons or {
-            ["ACP"] = true
+            ["ACPR"] = true
         }
         local prot = savedVar.ProtectedAddons[addon]
         if prot then
@@ -1353,7 +1353,7 @@ function ACP:Security_OnClick(addon)
     self:AddonList_OnShow()
 end
 
-function ACP:ShowSecurityTooltip(this)
+function ACPR:ShowSecurityTooltip(this)
     GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT")
 
     GameTooltip:AddLine(L["Click to enable protect mode. Protected addons will not be disabled"])
@@ -1363,7 +1363,7 @@ function ACP:ShowSecurityTooltip(this)
 end
 
 
-function ACP:RenameSet(set, name)
+function ACPR:RenameSet(set, name)
 
     local oldName = self:GetSetName(set)
     if not savedVar then savedVar = {} end
@@ -1377,7 +1377,7 @@ end
 
 -- Rebuild sortedAddonList from masterAddonList
 
-function ACP:RebuildSortedAddonList()
+function ACPR:RebuildSortedAddonList()
     for k in pairs(sortedAddonList) do
         sortedAddonList[k] = nil
     end
@@ -1399,11 +1399,11 @@ function ACP:RebuildSortedAddonList()
         end
     end
 
---	ACP.masterAddonList = masterAddonList
---	ACP.sortedAddonList = sortedAddonList
+--	ACPR.masterAddonList = masterAddonList
+--	ACPR.sortedAddonList = sortedAddonList
 end
 
-function ACP:SetMasterAddonBuilder(sorter)
+function ACPR:SetMasterAddonBuilder(sorter)
     if not addonListBuilders[sorter] or not savedVar then return end
     for k in pairs(collapsedAddons) do
         collapsedAddons[k] = nil
@@ -1412,7 +1412,7 @@ function ACP:SetMasterAddonBuilder(sorter)
     self:ReloadAddonList()
 end
 
-function ACP:UpdateLocale(loc)
+function ACPR:UpdateLocale(loc)
     for k,v in pairs(loc) do
         if v == true then
             L[k] = k
@@ -1424,14 +1424,14 @@ end
 
 
 -- UI Controllers.
-function ACP:SortDropDown_OnShow(this)
+function ACPR:SortDropDown_OnShow(this)
     if not self.initSortDropDown then
         UIDropDownMenu_Initialize(this, function() self:SortDropDown_Populate() end)
         self.initSortDropDown = true
     end
 end
 
-function ACP:SortDropDown_Populate()
+function ACPR:SortDropDown_Populate()
     local info
     for name,func in pairs(addonListBuilders) do
         info = UIDropDownMenu_CreateInfo()
@@ -1441,30 +1441,30 @@ function ACP:SortDropDown_Populate()
     end
 end
 
-function ACP:SortDropDown_OnClick(sorter)
+function ACPR:SortDropDown_OnClick(sorter)
 
 end
 
-function ACP:DisableAllAddons()
+function ACPR:DisableAllAddons()
     DisableAllAddOns(UnitName("player"))
-    EnableAddOn(ACP_ADDON_NAME, UnitName("player"))
+    EnableAddOn(ACPR_ADDON_NAME, UnitName("player"))
 
     for k in pairs(savedVar.ProtectedAddons) do
         EnableAddOn(k, UnitName("player"))
     end
-    ACP:Print("Disabled all addons (except ACP & protected)")
+    ACPR:Print("Disabled all addons (except ACPR & protected)")
     
-    if _G[ACP_FRAME_NAME]:IsShown() then
+    if _G[ACPR_FRAME_NAME]:IsShown() then
         self:AddonList_OnShow()
     end
 end
 
-function ACP:DisableAll_OnClick()
+function ACPR:DisableAll_OnClick()
     self:DisableAllAddons()
 
 end
 
-function ACP:Collapse_OnClick(obj)
+function ACPR:Collapse_OnClick(obj)
 
     local category = obj.category
     if not category then return end
@@ -1476,9 +1476,9 @@ function ACP:Collapse_OnClick(obj)
 
 end
 
-function ACP:CollapseAll_OnClick()
-    local obj = _G[ACP_FRAME_NAME .. "CollapseAll"]
-    local icon = _G[ACP_FRAME_NAME .. "CollapseAllIcon"]
+function ACPR:CollapseAll_OnClick()
+    local obj = _G[ACPR_FRAME_NAME .. "CollapseAll"]
+    local icon = _G[ACPR_FRAME_NAME .. "CollapseAllIcon"]
     obj.collapsed = toggle(obj.collapsed)
     if obj.collapsed then
         icon:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomInButton-Up")
@@ -1489,7 +1489,7 @@ function ACP:CollapseAll_OnClick()
     self:AddonList_OnShow()
 end
 
-function ACP:GetAddonCategory(addon)
+function ACPR:GetAddonCategory(addon)
     for i,a in ipairs(masterAddonList) do
         if type(a) == 'table' then
             if self:FindAddon(a, addon) then
@@ -1503,7 +1503,7 @@ function ACP:GetAddonCategory(addon)
     end
 end
 
-function ACP:GetAddonCategoryTable(addon)
+function ACPR:GetAddonCategoryTable(addon)
     for i,a in ipairs(masterAddonList) do
         if type(a) == 'table' then
             if a.category == addon then
@@ -1518,7 +1518,7 @@ function ACP:GetAddonCategoryTable(addon)
 end
 
 
-function ACP:AddonList_Enable(addonIndex, enabled, shift, ctrl, category)
+function ACPR:AddonList_Enable(addonIndex, enabled, shift, ctrl, category)
     if (type(addonIndex) == "number") then
         if (enabled) then
             enabledList = acquire()
@@ -1544,12 +1544,12 @@ function ACP:AddonList_Enable(addonIndex, enabled, shift, ctrl, category)
     self:AddonList_OnShow()
 end
 
-function ACP:AddonList_LoadNow(index)
+function ACPR:AddonList_LoadNow(index)
     UIParentLoadAddOn(index)
-    ACP:AddonList_OnShow()
+    ACPR:AddonList_OnShow()
 end
 
-function ACP:AddonList_OnShow_Fast(this)
+function ACPR:AddonList_OnShow_Fast(this)
     local function setSecurity(obj, idx)
         local width, height, iconWidth = 64, 16, 16
         local increment = iconWidth / width
@@ -1561,12 +1561,12 @@ function ACP:AddonList_OnShow_Fast(this)
     local obj
     local origNumAddons = GetNumAddOns()
     local numAddons = #sortedAddonList
-    FauxScrollFrame_Update(ACP_AddonList_ScrollFrame, numAddons, ACP_MAXADDONS, ACP_LINEHEIGHT, nil, nil, nil)
+    FauxScrollFrame_Update(ACPR_AddonList_ScrollFrame, numAddons, ACPR_MAXADDONS, ACPR_LINEHEIGHT, nil, nil, nil)
     local i
-    local offset = FauxScrollFrame_GetOffset(ACP_AddonList_ScrollFrame)
+    local offset = FauxScrollFrame_GetOffset(ACPR_AddonList_ScrollFrame)
     local curr_category = ""
-    for i=1,ACP_MAXADDONS,1 do
-        obj = _G["ACP_AddonListEntry" .. i]
+    for i=1,ACPR_MAXADDONS,1 do
+        obj = _G["ACPR_AddonListEntry" .. i]
         local addonIdx = sortedAddonList[offset + i]
 
         --     if not curr_category then
@@ -1576,15 +1576,15 @@ function ACP:AddonList_OnShow_Fast(this)
             obj:Hide()
             obj.addon = nil
         else
-            local headerText = _G["ACP_AddonListEntry" .. i .. "Header"]
-            local titleText = _G["ACP_AddonListEntry" .. i .. "Title"]
-            local status = _G["ACP_AddonListEntry" .. i .. "Status"]
-            local checkbox = _G["ACP_AddonListEntry" .. i .. "Enabled"]
-            local securityButton = _G["ACP_AddonListEntry" .. i .. "Security"]
-            local securityIcon = _G["ACP_AddonListEntry" .. i .. "SecurityIcon"]
-            local loadnow = _G["ACP_AddonListEntry" .. i .. "LoadNow"]
-            local collapse = _G["ACP_AddonListEntry" .. i .. "Collapse"]
-            local collapseIcon = _G["ACP_AddonListEntry" .. i .. "CollapseIcon"]
+            local headerText = _G["ACPR_AddonListEntry" .. i .. "Header"]
+            local titleText = _G["ACPR_AddonListEntry" .. i .. "Title"]
+            local status = _G["ACPR_AddonListEntry" .. i .. "Status"]
+            local checkbox = _G["ACPR_AddonListEntry" .. i .. "Enabled"]
+            local securityButton = _G["ACPR_AddonListEntry" .. i .. "Security"]
+            local securityIcon = _G["ACPR_AddonListEntry" .. i .. "SecurityIcon"]
+            local loadnow = _G["ACPR_AddonListEntry" .. i .. "LoadNow"]
+            local collapse = _G["ACPR_AddonListEntry" .. i .. "Collapse"]
+            local collapseIcon = _G["ACPR_AddonListEntry" .. i .. "CollapseIcon"]
 
 
             if type(addonIdx) == 'string' and not GetAddonIndex(addonIdx, true) then
@@ -1640,7 +1640,7 @@ function ACP:AddonList_OnShow_Fast(this)
 
                 local  name, title, notes, loadable, reason, security, newVersion
                 if (addonIdx > origNumAddons) then
-                    name = ACP_BLIZZARD_ADDONS[(addonIdx - origNumAddons)]
+                    name = ACPR_BLIZZARD_ADDONS[(addonIdx - origNumAddons)]
                     name, title, notes, loadable, reason, security, newVersion  = GetAddOnInfo(name)
                     --					obj.addon = name
                     --					title = L[name]
@@ -1701,7 +1701,7 @@ function ACP:AddonList_OnShow_Fast(this)
                     checkbox:SetHeight(16)
                 end
 
-                if (name == ACP_ADDON_NAME or addonIdx > origNumAddons) then
+                if (name == ACPR_ADDON_NAME or addonIdx > origNumAddons) then
                     checkbox:Hide()
                 else
                     checkbox:Show()
@@ -1759,29 +1759,29 @@ function ACP:AddonList_OnShow_Fast(this)
     end
 end
 
-function ACP:AddonList_OnShow(this)
+function ACPR:AddonList_OnShow(this)
     UpdateAddOnMemoryUsage()
     return self:AddonList_OnShow_Fast(this)
 end
 
-function ACP:SetButton_OnClick(this)
+function ACPR:SetButton_OnClick(this)
     if not self.dropDownFrame then
-        local frame = CreateFrame("Frame", "ACP_SetDropDown", nil, "UIDropDownMenuTemplate")
-        UIDropDownMenu_Initialize(frame, ACP.SetDropDown_Populate, "MENU") -- wotlk temp hack fixing the UIDropDown menu not displayed after pressing "Sets" button
+        local frame = CreateFrame("Frame", "ACPR_SetDropDown", nil, "UIDropDownMenuTemplate")
+        UIDropDownMenu_Initialize(frame, ACPR.SetDropDown_Populate, "MENU") -- wotlk temp hack fixing the UIDropDown menu not displayed after pressing "Sets" button
         self.dropDownFrame = frame
     end
     ToggleDropDownMenu(1, nil, self.dropDownFrame, this, 0, 0)
 end
 
 
-function ACP:SetDropDown_Populate(level)
-    self = ACP -- wotlk temp hack fixing the UIDropDown menu not displayed after pressing "Sets" button
+function ACPR:SetDropDown_Populate(level)
+    self = ACPR -- wotlk temp hack fixing the UIDropDown menu not displayed after pressing "Sets" button
     if not savedVar then return end
 
     if level == 1 then
 
         local info, count, name
-        for i=1,ACP_SET_SIZE do
+        for i=1,ACPR_SET_SIZE do
             local name = nil
 
             info = UIDropDownMenu_CreateInfo()
@@ -1816,8 +1816,8 @@ function ACP:SetDropDown_Populate(level)
 
         -- Default set.
         info = UIDropDownMenu_CreateInfo()
-        info.text = string.format("%s (%d)", L["Default"], table.getn(ACP_DefaultSet))
-        info.value = ACP_DEFAULT_SET
+        info.text = string.format("%s (%d)", L["Default"], table.getn(ACPR_DefaultSet))
+        info.value = ACPR_DEFAULT_SET
         info.hasArrow = 1
         info.notCheckable = 1
         UIDropDownMenu_AddButton(info)
@@ -1832,12 +1832,12 @@ function ACP:SetDropDown_Populate(level)
         UIDropDownMenu_AddButton(info, level)
 
 
-        if UIDROPDOWNMENU_MENU_VALUE ~= ACP_DEFAULT_SET then
+        if UIDROPDOWNMENU_MENU_VALUE ~= ACPR_DEFAULT_SET then
             info = UIDropDownMenu_CreateInfo()
             info.text = L["Save"]
             info.func = function()
                 self.savingSet = UIDROPDOWNMENU_MENU_VALUE
-                StaticPopup_Show("ACP_SAVESET", setName)
+                StaticPopup_Show("ACPR_SAVESET", setName)
             end
             info.notCheckable = 1
             UIDropDownMenu_AddButton(info, level)
@@ -1863,12 +1863,12 @@ function ACP:SetDropDown_Populate(level)
         info.notCheckable = 1
         UIDropDownMenu_AddButton(info, level)
 
-        if UIDROPDOWNMENU_MENU_VALUE ~= ACP_DEFAULT_SET and UIDROPDOWNMENU_MENU_VALUE ~= playerClass then
+        if UIDROPDOWNMENU_MENU_VALUE ~= ACPR_DEFAULT_SET and UIDROPDOWNMENU_MENU_VALUE ~= playerClass then
             info = UIDropDownMenu_CreateInfo()
             info.text = L["Rename"]
             info.func = function()
                 self.renamingSet = UIDROPDOWNMENU_MENU_VALUE
-                StaticPopup_Show("ACP_RENAMESET", setName)
+                StaticPopup_Show("ACPR_RENAMESET", setName)
                 CloseDropDownMenus(1)
             end
             info.notCheckable = 1
@@ -1886,30 +1886,30 @@ end
 
 
 do
--- /print ACP.embedded_libs
-    ACP.embedded_libs = {}
-    -- /print ACP.embedded_libs_owners
-    ACP.embedded_libs_owners = {}
+-- /print ACPR.embedded_libs
+    ACPR.embedded_libs = {}
+    -- /print ACPR.embedded_libs_owners
+    ACPR.embedded_libs_owners = {}
 
 
-    function ACP:ADDON_LOADED(name)
+    function ACPR:ADDON_LOADED(name)
         if not LibStub then return end
         self:LocateEmbeds()
 
-        if name == "ACP" or name:sub(9) == "Blizzard_" then
+        if name == "ACPR" or name:sub(9) == "Blizzard_" then
             name = "???"
         end
 
-        for k,v in pairs(ACP.embedded_libs_owners) do
+        for k,v in pairs(ACPR.embedded_libs_owners) do
             if type(v) == "boolean" then
-                ACP.embedded_libs_owners[k] = name
+                ACPR.embedded_libs_owners[k] = name
             end
         end
 
     end
 
-    -- /script ACP:LocateEmbeds()
-    function ACP:LocateEmbeds()
+    -- /script ACPR:LocateEmbeds()
+    function ACPR:LocateEmbeds()
         local embeds = LibStub.libs
 
         for k,v in pairs(embeds) do
@@ -1921,11 +1921,11 @@ do
     end
 end
 
-function ACP:ShowTooltip(this, index)
+function ACPR:ShowTooltip(this, index)
     if not index then return end
 
     if type(index) == "number" and (index > GetNumAddOns()) then
-        index = ACP_BLIZZARD_ADDONS[(index - GetNumAddOns())]
+        index = ACPR_BLIZZARD_ADDONS[(index - GetNumAddOns())]
     end
 
     if not index then return end
@@ -2036,7 +2036,7 @@ function ACP:ShowTooltip(this, index)
 end
 
 
-function ACP:ShowHintTooltip(this, index)
+function ACPR:ShowHintTooltip(this, index)
     GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT")
 
     GameTooltip:AddLine(L["Use SHIFT to override the current enabling of dependancies behaviour."])
@@ -2106,17 +2106,17 @@ local function enable_lod_dependants(addon)
 --        end
 
         if isdep and not enabled and ondemand then
-            ACP_EnableRecurse(name, true)
+            ACPR_EnableRecurse(name, true)
         --EnableAddOn(name)
         end
     end
 end
 
-local function enableFunc(x) ACP_EnableRecurse(x, true) end
+local function enableFunc(x) ACPR_EnableRecurse(x, true) end
 
-local function enableIfLodFunc(x) if IsAddOnLoadOnDemand(x) then ACP_EnableRecurse(x, true) end end
+local function enableIfLodFunc(x) if IsAddOnLoadOnDemand(x) then ACPR_EnableRecurse(x, true) end end
 
-function ACP_EnableRecurse(name, skip_children)
+function ACPR_EnableRecurse(name, skip_children)
     local enabled = GetAddOnEnableState(UnitName("player"), GetAddOnInfo(name)) > 0;
     if enabled then
         return
@@ -2181,7 +2181,7 @@ end
 
 local frame = CreateFrame("Frame")
 
-function ACP:MakeFrameScalable(parent, x, y)
+function ACPR:MakeFrameScalable(parent, x, y)
     local handle = CreateFrame("Frame", nil, parent)
     handle:EnableMouse(true)
     handle:SetSize(25, 25)
